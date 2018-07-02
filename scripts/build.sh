@@ -36,7 +36,13 @@ esac
 
 err=$?
 if test $err = 0 -a -n "$WITH_TESTS" ; then
-    tests/testdriver
+    if [ -f tests/.libs/testdriver ] ; then
+        EXEC_FILE=tests/.libs/testdriver
+    else
+        EXEC_FILE=tests/testdriver
+    fi
+    # then run valgrind on the actual executable
+    LD_LIBRARY_PATH=.libs valgrind --track-origins=yes --leak-check=yes --error-exitcode=123 --quiet $EXEC_FILE 
     err=$?
 fi
 
